@@ -82,7 +82,7 @@ let getPlaneDimentions = function (data) {
 }
 
 let drawPlane = function (data, dimensions) {
-
+    let pointData = data.slice(); // Duplicating array data
     let yVal = 0;
     let subArray = [];
     let points = '.'.repeat(dimensions.maxX - dimensions.minX + 1);
@@ -94,10 +94,10 @@ let drawPlane = function (data, dimensions) {
         plane.push(points);
     }
 
-    while (data.length > 0) {
-        yVal = data[0].position.y;
-        subArray = data.filter(x => (x.position.y === yVal));
-        data = data.filter(x => (x.position.y !== yVal))
+    while (pointData.length > 0) {
+        yVal = pointData[0].position.y;
+        subArray = pointData.filter(x => (x.position.y === yVal));
+        pointData = pointData.filter(x => (x.position.y !== yVal))
 
         subArray.forEach(element => {
             let j = element.position.x - dimensions.minX;
@@ -108,6 +108,7 @@ let drawPlane = function (data, dimensions) {
         });
     }
 
+    plane = plane.join('\n');
     console.log(plane);
 
     return plane;
