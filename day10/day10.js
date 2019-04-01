@@ -40,15 +40,45 @@ let sortElements = function (data) {
     // Converting into array of objects with extracted info
     data = data.map(extractPoint);
 
+    // Sort by position in Y
     data.sort(function (a, b) {
         return a.position.y - b.position.y;
     });
 
-    return data;
+    // Sort by position in X
+    let sortedData = [];
+    let yVal = 0;
+    let subArray = [];
+    while (data.length > 0) {
+        yVal = data[0].position.y;
+        subArray = data.filter(x => (x.position.y === yVal));
+        data = data.filter(x => (x.position.y !== yVal))
+
+        subArray.sort(function (a, b) {
+            return a.position.x - b.position.x;
+        });
+        sortedData = sortedData.concat(subArray);
+    }
+
+    return sortedData;
 }
 
 let getPlaneDimentions = function (data) {
+    let dimensions = {
+        minY: data[0].position.y,
+        maxY: data[data.length - 1].position.y
+    }
 
+    let array = data.slice(); // Clone the array
+
+    array.sort(function (a, b) {
+        return a.position.x - b.position.x;
+    });
+
+    dimensions.minX = array[0].position.x;
+    dimensions.maxX = array[array.length - 1].position.x;
+
+    return dimensions;
 }
 
 let drawPlane = function (data, dimensions, seconds) {
