@@ -7,6 +7,65 @@ let readInputFile = function (fileName) {
     return content;
 }
 
+let extractPoint = function (element) {
+    let indexV = element.indexOf('v');
+
+    let elementPosition = element.slice(0, indexV);
+    let inpX = elementPosition.indexOf('<') + 1;
+    let endpX = elementPosition.indexOf(',');
+    let endpY = elementPosition.indexOf('>');
+
+    let elementVel = element.slice(indexV);
+    let invX = elementVel.indexOf('<') + 1;
+    let endvX = elementVel.indexOf(',');
+    let endvY = elementVel.indexOf('>');
+
+    let point = {
+        position: {
+            x: Number(elementPosition.slice(inpX, endpX)),
+            y: Number(elementPosition.slice(endpX + 1, endpY))
+        },
+        velocity: {
+            x: Number(elementVel.slice(invX, endvX)),
+            y: Number(elementVel.slice(endvX + 1, endvY))
+        }
+    }
+
+    return point;
+}
+
+let sortElements = function (data) {
+    data = data.split('\n');
+
+    // Converting into array of objects with extracted info
+    data = data.map(extractPoint);
+
+    data.sort(function (a, b) {
+        return a.position.y - b.position.y;
+    });
+
+    return data;
+}
+
+let getPlaneDimentions = function (data) {
+
+}
+
+let drawPlane = function (data, dimensions, seconds) {
+
+}
+
+let processData = function (data, seconds) {
+
+    data = sortElements(data);
+
+    let dimensions = getPlaneDimentions(data)
+
+    let plane = drawPlane(data, dimensions, seconds);
+
+    return data;
+}
+
 if (process.argv.length > 2) { //user added arguments
 
     // Getting user's specified arguments
@@ -15,9 +74,11 @@ if (process.argv.length > 2) { //user added arguments
 
     let content = readInputFile(args[0]);
 
+    let plane = processData(content, 1);
+
     console.log("Processing input..." + "\n");
 
-    console.log(content);
+    console.log(plane);
 
 } else {
 
@@ -56,5 +117,11 @@ if (process.argv.length > 2) { //user added arguments
     console.log("No file entered...");
     console.log("Default raw data:");
     console.log(defaultPoints);
+
+    let plane = processData(defaultPoints, 3);
+
+    console.log("\nDrawing default points..." + "\n");
+
+    console.log(plane);
 
 }
