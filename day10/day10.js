@@ -81,8 +81,36 @@ let getPlaneDimentions = function (data) {
     return dimensions;
 }
 
-let drawPlane = function (data, dimensions, seconds) {
+let drawPlane = function (data, dimensions) {
 
+    let yVal = 0;
+    let subArray = [];
+    let points = '.'.repeat(dimensions.maxX - dimensions.minX + 1);
+    let h = dimensions.maxY - dimensions.minY + 1;
+    let plane = [];
+
+    // Drawing points plane
+    for (let i = 0; i < h; i++) {
+        plane.push(points);
+    }
+
+    while (data.length > 0) {
+        yVal = data[0].position.y;
+        subArray = data.filter(x => (x.position.y === yVal));
+        data = data.filter(x => (x.position.y !== yVal))
+
+        subArray.forEach(element => {
+            let j = element.position.x - dimensions.minX;
+            let k = element.position.y - dimensions.minY;
+            console.log("px: " + element.position.x + ", index" + j);
+
+            plane[k] = plane[k].substr(0, j) + '#' + plane[k].substr(j + 1);
+        });
+    }
+
+    console.log(plane);
+
+    return plane;
 }
 
 let processData = function (data, seconds) {
@@ -91,7 +119,7 @@ let processData = function (data, seconds) {
 
     let dimensions = getPlaneDimentions(data)
 
-    let plane = drawPlane(data, dimensions, seconds);
+    let plane = drawPlane(data, dimensions);
 
     return data;
 }
