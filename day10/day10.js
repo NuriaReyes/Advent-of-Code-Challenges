@@ -7,6 +7,15 @@ let readInputFile = function (fileName) {
     return content;
 }
 
+let writeOutputFile = function (fileName, content) {
+    let fs = require('fs'); // Adding file system module
+
+    // Writing content to file (string format)
+    fs.writeFileSync(fileName, content, 'utf8');
+
+    return fileName;
+}
+
 let extractPoint = function (element) {
     let indexV = element.indexOf('v');
 
@@ -93,6 +102,7 @@ let drawPlane = function (data, dimensions) {
     for (let i = 0; i < h; i++) {
         plane.push(points);
     }
+    
 
     while (pointData.length > 0) {
         yVal = pointData[0].position.y;
@@ -107,9 +117,9 @@ let drawPlane = function (data, dimensions) {
             plane[k] = plane[k].substr(0, j) + '#' + plane[k].substr(j + 1);
         });
     }
-
+    
     plane = plane.join('\n');
-    console.log(plane);
+    //console.log(plane);
 
     return plane;
 }
@@ -138,13 +148,35 @@ let processData = function (data, seconds) {
 
     let dimensions = getPlaneDimentions(data)
 
-    let plane ;
-    for (let i = 0; i <= seconds; ++i) {
-        console.log("\n" + i + "s...\n");
-        plane = drawPlane(data, dimensions);
+    for (let j = 0; j < 10140; j++) {    
         data = movePoints(data);
+        dimensions = getPlaneDimentions(data)
     }
 
+    console.log("I moved a lot....");
+    console.log("data.length: " + data.length);
+    console.log(dimensions);
+    //console.log(data);
+    
+
+    let plane;
+    let fileContent = '';
+
+    for (let i = 0; i <= seconds; ++i) {
+        console.log("\n" + i + "s...\n");
+        
+        let header = '\n\nTime: ' + i + 's...\n\n';
+        plane = drawPlane(data, dimensions);
+        data = movePoints(data);
+
+        fileContent += header;
+        fileContent += plane;
+    }
+
+    console.log("\nWriting to a file...");
+    
+    writeOutputFile ("output_day10.txt", fileContent);
+    
     return data;
 }
 
@@ -156,11 +188,11 @@ if (process.argv.length > 2) { //user added arguments
 
     let content = readInputFile(args[0]);
 
-    let plane = processData(content, 1);
-
     console.log("Processing input..." + "\n");
 
-    console.log(plane);
+    let plane = processData(content, 5);
+
+    //console.log(plane);
 
 } else {
 
@@ -197,9 +229,6 @@ if (process.argv.length > 2) { //user added arguments
                         \nposition=<-3,  6> velocity=< 2, -1>' ;
 
     console.log("No file entered...");
-    // console.log("Default raw data:");
-    // console.log(defaultPoints);
-
 
     console.log("\nDrawing default points...");
 
