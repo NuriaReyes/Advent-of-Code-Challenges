@@ -35,10 +35,10 @@ let extractPoint = function (element) {
 }
 
 let sortElements = function (data) {
-    data = data.split('\n');
+    // data = data.split('\n');
 
-    // Converting into array of objects with extracted info
-    data = data.map(extractPoint);
+    // // Converting into array of objects with extracted info
+    // data = data.map(extractPoint);
 
     // Sort by position in Y
     data.sort(function (a, b) {
@@ -102,7 +102,7 @@ let drawPlane = function (data, dimensions) {
         subArray.forEach(element => {
             let j = element.position.x - dimensions.minX;
             let k = element.position.y - dimensions.minY;
-            console.log("px: " + element.position.x + ", index" + j);
+            //console.log("px: " + element.position.x + ", index" + j);
 
             plane[k] = plane[k].substr(0, j) + '#' + plane[k].substr(j + 1);
         });
@@ -114,13 +114,36 @@ let drawPlane = function (data, dimensions) {
     return plane;
 }
 
+let movePoints = function (data) {
+    
+    data = sortElements(data);
+
+    data.forEach (element => {
+        element.position.x += element.velocity.x;
+        element.position.y += element.velocity.y;
+    });
+    
+    data = sortElements(data);
+
+    return data;
+}
+
 let processData = function (data, seconds) {
+    data = data.split('\n');
+
+    // Converting into array of objects with extracted info
+    data = data.map(extractPoint);
 
     data = sortElements(data);
 
     let dimensions = getPlaneDimentions(data)
 
-    let plane = drawPlane(data, dimensions);
+    let plane ;
+    for (let i = 0; i <= seconds; ++i) {
+        console.log("\n" + i + "s...\n");
+        plane = drawPlane(data, dimensions);
+        data = movePoints(data);
+    }
 
     return data;
 }
@@ -174,13 +197,14 @@ if (process.argv.length > 2) { //user added arguments
                         \nposition=<-3,  6> velocity=< 2, -1>' ;
 
     console.log("No file entered...");
-    console.log("Default raw data:");
-    console.log(defaultPoints);
+    // console.log("Default raw data:");
+    // console.log(defaultPoints);
+
+
+    console.log("\nDrawing default points...");
 
     let plane = processData(defaultPoints, 3);
 
-    console.log("\nDrawing default points..." + "\n");
-
-    console.log(plane);
+    //console.log(plane);
 
 }
