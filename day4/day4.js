@@ -1,10 +1,7 @@
 let readInputFile = function (fileName) {
     let fs = require('fs'); // Adding file system module
 
-    // Getting raw content (string format)
-    let content = fs.readFileSync(fileName, 'utf8');
-
-    return content;
+    return fs.readFileSync(fileName, 'utf8');
 }
 
 // element is an input's raw row
@@ -40,8 +37,6 @@ let getElementInfo = function (element) {
         elementInfo.guardID = element.slice(k, k + endID); // guard ID
     }
 
-    // elementInfo will be an object with the extracted info: date, time, is there guard ID?, 
-    // if there is guard ID - the ID otherwise is the guard asleep?
     // elementInfo = { date: {month, day}, time: {hour, minute}, guard ID?, ID || is guard asleep? } <-- format
     return elementInfo;
 }
@@ -69,11 +64,10 @@ let sortElements = function (data) { //sort entries chronologically
 
                 if (days.length > 0) {
 
-                    for (let k = 0; k <= 23; k+=23) {
+                    for (let k = 0; k <= 23; k += 23) {
                         hours = days.filter(x => (x.time.hour === k));
 
-                        if (hours.length > 0)
-                        {
+                        if (hours.length > 0) {
 
                             for (let m = 0; m <= 59; m++) {
                                 minutes = hours.filter(x => (x.time.minute === m));
@@ -174,11 +168,21 @@ let getMaxAsleepTime = function (data) {
         intersection = intersection.concat(element.mins);
     });
 
-    intersection.forEach( function(x) { 
-                            minuteCounts[x] = (minuteCounts[x] || 0) + 1; 
-                        });
+    intersection.forEach(function (x) {
+        minuteCounts[x] = (minuteCounts[x] || 0) + 1;
+    });
 
-    maxGuard.commonMins = minuteCounts;
+    let max = {}; 
+    let ref = 0;
+    for (let x in minuteCounts) {
+        if (minuteCounts[x] > ref) {
+            max.repeated = minuteCounts[x];
+            ref = minuteCounts[x];
+            max.minute = x;
+        }
+    }
+
+    maxGuard.maxMin = max;
 
     return maxGuard;
 }
@@ -189,7 +193,11 @@ let processData = function (data) {
 
     let guard = getMaxAsleepTime(data);
 
-    return guard;
+    console.log("ID: " + guard.id + ", minute: " + guard.maxMin.minute);
+    
+    let result = Number(guard.id.slice(1)) * Number(guard.maxMin.minute);
+
+    return result;
 }
 
 if (process.argv.length > 2) { //user added arguments
@@ -200,13 +208,11 @@ if (process.argv.length > 2) { //user added arguments
 
     let content = readInputFile(args[0]);
 
-    guard = processData(content);
-
     console.log("Processing input..." + "\n");
 
-    console.log("Guard info: ");
+    let result = processData(content);
 
-    console.log(guard);
+    console.log("Result: " + result);
 
 } else {
     let data = '[1518-11-01 00:00] Guard #10 begins shift \
@@ -230,12 +236,15 @@ if (process.argv.length > 2) { //user added arguments
     console.log("No file entered...");
     console.log("Default raw data: \n" + data + "\n");
 
-    myData = processData(data);
-
     console.log("Executing default input..." + "\n");
 
-    console.log("Guard info: ");
+    myData = processData(data);
+    
+    console.log("Result: ");
 
     console.log(myData);
 
 }
+
+// Exporting functions 
+module.exports = { readInputFile, getElementInfo, sortElements, getMaxAsleepTime, processData };
