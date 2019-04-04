@@ -1,4 +1,4 @@
-const { getFrecuency } = require('./day1');
+const { getFrecuency, getRepeatedFrecuency } = require('./day1');
 
 let assert_getFrecuency = function (data, expectedValue) {
     console.log("Testing input: " + data);
@@ -9,27 +9,57 @@ let assert_getFrecuency = function (data, expectedValue) {
     console.log("\nOutput: " + result);
 
     if (testPassed) {
-        console.log("Test passed\n");
+        console.log("Part 1 test passed\n");
     } else {
         console.log("Expected: " + expectedValue);
-        console.log("Test failed\n");
+        console.log("Part 1 test failed\n");
+    }
+
+    return testPassed;
+}
+
+let assert_getRepeatedFrecuency = function (data, expectedValue) {
+    console.log("Testing input: " + data);
+
+    let result = getRepeatedFrecuency(data);
+    let testPassed = (result === expectedValue);
+
+    console.log("\nOutput: " + result);
+
+    if (testPassed) {
+        console.log("Part 2 test passed\n");
+    } else {
+        console.log("Expected: " + expectedValue);
+        console.log("Part 2 test failed\n");
     }
 
     return testPassed;
 }
 
 //test
-let data = [[1, 2, 3],
-[3, 2, 1, 0, -1, -2, -3],
-[5, 5, 7, 17, 3, -10, 11, 19]];
+let data = [[1, -2, 3, 1],
+            [1, -1],
+            [3, 3, 4, -2, -4],
+            [-6, 3, 8, 5, -6],
+            [7, 7, -2, -7, -4]];
 
-let expectedOutput = [6, 0, 57];
-let passedTests = 0;
+let expectedOutputP1 = [3, 0, 4, 4, 1];
+let expectedOutputP2 = [2, 0, 10, 5, 14];
+let passedTestsP1 = 0;
+let passedTestsP2 = 0;
 
-data.forEach((element, index) => { if (assert_getFrecuency(element, expectedOutput[index])) ++passedTests });
+data.forEach((element, index) => { if (assert_getFrecuency(element, expectedOutputP1[index])) ++passedTestsP1 });
 
-if (data.length === passedTests) {
-    console.log("All tests passed");
+data.forEach((element, index) => { if (assert_getRepeatedFrecuency(element, expectedOutputP2[index])) ++passedTestsP2 });
+
+if (data.length === passedTestsP1) {
+    console.log("All Part 1 tests passed");
 } else {
-    console.log(passedTests + " tests passed out of " + data.length);
+    console.log(passedTestsP1 + " Part 1 tests passed out of " + data.length);
+}
+
+if (data.length === passedTestsP2) {
+    console.log("All Part 2 tests passed");
+} else {
+    console.log(passedTestsP2 + " Part 2 tests passed out of " + data.length);
 }

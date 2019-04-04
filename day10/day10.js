@@ -1,7 +1,7 @@
 let readInputFile = function (fileName) {
     let fs = require('fs'); // Adding file system module
 
-    return fs.readFileSync(fileName, 'utf8');
+    return fs.readFileSync(fileName, 'utf8').trim();
 }
 
 let writeOutputFile = function (fileName, content) {

@@ -1,4 +1,4 @@
-const { readInputFile, getFrecuency, run } = require('./day1');
+const { run } = require('./day1');
 
 if (process.argv.length > 2) { //user added arguments
 
@@ -6,14 +6,15 @@ if (process.argv.length > 2) { //user added arguments
     let args = process.argv.slice(2); // first 2 elements being node and js file
     console.log("Reading file: " + args[0] + "\n");
 
-    console.log("Frecuency: " + run(args[0]));
-
+    console.log("Frecuency: " + run(1, args[0]));
+    console.log("First repeated frecuency: " + run(2, args[0]));
 } else {
     console.log("No file entered...");
     
-    let arr = [-1, 2, 3];
+    let arr = [1, -2, 3, 1];
 
     console.log("Executing default input: " + arr);
     
-    console.log("Frecuency: " + run());
+    console.log("Frecuency: " + run(1));
+    console.log("First repeated frecuency: " + run(2));
 }
