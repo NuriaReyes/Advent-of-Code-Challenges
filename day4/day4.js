@@ -75,14 +75,13 @@ let getCommonAsleepMinute = function (data) {
         return self.indexOf(value) === index;
     });
 
-    let totalTimes = [];
     let sleepIntervals = [];
     let init = 0;
     let asleepGuard = {};
 
     ID.forEach((id, index) => {
         // Getting rows with id
-        let idData = data.filter(e => (e.guardID === id) && !e.hasGuardID); 
+        let idData = data.filter(e => (e.guardID === id) && !e.hasGuardID);
 
         // Getting all minutes the guard was asleep
         idData.forEach(e => {
@@ -121,100 +120,75 @@ let getCommonAsleepMinute = function (data) {
             asleepGuard.minute = max.minute;
         }
 
-        // totalTimes.push(max);
         sleepIntervals = [];
     });
-
-    console.log("asleepGuard: ");
-    console.log(asleepGuard);
 
     return asleepGuard;
 }
 
 // data is an array of objects with format: { time: {hour, minute}, dateTimeNum, guard ID?, ID || is guard asleep? }
 let getMaxAsleepTime = function (data) {
-    let ID = [];
-    let index = -1;
 
-    // Adding corresponding ids
-    data.forEach(element => {
-        if (element.hasGuardID) {
-            ID.push(element.guardID);
-            ++index;
-        } else {
-            element.guardID = ID[index];
-        }
-    });
-
-    // Leave only unique values
-    ID = ID.filter(function (value, index, self) {
+    // Getting unique Ids
+    let ID = data.map(x => x.guardID).filter(function (value, index, self) {
         return self.indexOf(value) === index;
     });
 
-    let totalTimes = [];
     let initTime = 0;
     let totalT = 0;
+    let maxGuard = {};
 
     // Getting total times for each guard ID
-    ID.forEach(id => {
-        data.forEach(e => {
-            if ((e.guardID === id) && !e.hasGuardID) {
-                if (e.isAsleep) {
-                    initTime = e.time.minute;
-                } else {
-                    totalT += e.time.minute - initTime;
-                    initTime = 0;
-                }
+    ID.forEach((id, index) => {
+        // Getting rows with id
+        let idData = data.filter(e => (e.guardID === id) && !e.hasGuardID);
+
+        // Getting all minutes the guard was asleep
+        idData.forEach(e => {
+            if (e.isAsleep) {
+                initTime = e.time.minute;
+            } else {
+                totalT += e.time.minute - initTime;
+                initTime = 0;
             }
         });
 
-        totalTimes.push(totalT);
+        if (index === 0) {
+            maxGuard.id = id;
+            maxGuard.totalTime = totalT;
+        } else if (totalT > maxGuard.totalTime) {
+            maxGuard.id = id;
+            maxGuard.totalTime = totalT;
+        }
+
         totalT = 0;
     });
-
-    // Getting guard with more time asleep
-    let maxAsleep = Math.max(...totalTimes);
-    let maxGuard = {};
-
-    for (let i = 0; i < totalTimes.length; i++) {
-        if (totalTimes[i] === maxAsleep) {
-            maxGuard.id = ID[i];
-            maxGuard.totalTime = maxAsleep;
-            break;
-        }
-    }
 
     // Constructing object with guard's info
     maxGuard.times = [];
     let asleepTime = {};
+    let minsData = data.filter(e => (e.guardID === maxGuard.id) && !e.hasGuardID);
 
-    for (let j = 0; j < data.length; ++j) {
-        if ((data[j].guardID == maxGuard.id) && !data[j].hasGuardID) {
-            if (data[j].isAsleep) {
-                asleepTime.begin = data[j].time.minute;
-            } else {
-                asleepTime.end = data[j].time.minute - 1;
-                asleepTime.mins = [];
+    minsData.forEach(element => {
 
-                for (let i = asleepTime.begin; i <= asleepTime.end; ++i) {
-                    asleepTime.mins.push(i);
-                }
+        if (element.isAsleep) {
+            asleepTime.begin = element.time.minute;
+        } else {
+            asleepTime.end = element.time.minute - 1;
 
-                maxGuard.times.push(asleepTime);
-                asleepTime = {};
+            for (let i = asleepTime.begin; i <= asleepTime.end; ++i) {
+                maxGuard.times.push(i);
             }
+
+            asleepTime = {};
         }
-    }
 
-    // Getting most common minute
-    let intersection = [];
-    let minuteCounts = {};
-
-    maxGuard.times.forEach(element => {
-        intersection = intersection.concat(element.mins);
     });
 
-    intersection.forEach(function (x) {
+    // Getting minute the guard slept the most
+    let minuteCounts = {};
+
+    maxGuard.times.forEach(function (x) {
         minuteCounts[x] = (minuteCounts[x] || 0) + 1;
     });
 
@@ -237,16 +211,18 @@ let processData = function (data) {
 
     data = sortElements(data);
 
-    getCommonAsleepMinute(data);
+    let maxGuard = getMaxAsleepTime(data);
+    console.log("Part 1 - ID: " + maxGuard.id + ", minute: " + maxGuard.maxMin.minute);
 
-    let guard = getMaxAsleepTime(data);
+    let commonGuard = getCommonAsleepMinute(data);
+    console.log("Part 2 - ID: " + commonGuard.id + ", minute: " + commonGuard.minute);
 
-    console.log("ID: " + guard.id + ", minute: " + guard.maxMin.minute);
+    let results = [];
+    results[0] = Number(maxGuard.id.slice(1)) * Number(maxGuard.maxMin.minute);
+    results[1] = Number(commonGuard.id.slice(1)) * Number(commonGuard.minute);
 
-    let result = Number(guard.id.slice(1)) * Number(guard.maxMin.minute);
-
-    return result;
+    return results;
 }
 
 // Exporting functions 
-module.exports = { readInputFile, getElementInfo, sortElements, getMaxAsleepTime, processData };
+module.exports = { readInputFile, getElementInfo, sortElements, getCommonAsleepMinute, getMaxAsleepTime, processData };

@@ -12,7 +12,8 @@ if (process.argv.length > 2) { //user added arguments
 
     let result = processData(content);
 
-    console.log("Result: " + result);
+    console.log("Strategy 1 result: " + result[0]);
+    console.log("Strategy 2 result: " + result[1]);
 
 } else {
     let data = '[1518-11-01 00:00] Guard #10 begins shift \
@@ -38,9 +39,8 @@ if (process.argv.length > 2) { //user added arguments
 
     console.log("Executing default input..." + "\n");
 
-    myData = processData(data);
-    
-    console.log("Result: ");
+    result = processData(data);
 
-    console.log(myData);
+    console.log("Strategy 1 result: " + result[0]);
+    console.log("Strategy 2 result: " + result[1]);
 }
