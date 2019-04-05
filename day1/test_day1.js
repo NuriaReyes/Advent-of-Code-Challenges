@@ -1,7 +1,7 @@
 const { getFrecuency, getRepeatedFrecuency } = require('./day1');
 
 let assert_getFrecuency = function (data, expectedValue) {
-    console.log("Testing input: " + data);
+    console.log("Testing day 1 puzzle part 1 \nInput: " + data);
 
     let result = getFrecuency(data);
     let testPassed = (result === expectedValue);
@@ -19,7 +19,7 @@ let assert_getFrecuency = function (data, expectedValue) {
 }
 
 let assert_getRepeatedFrecuency = function (data, expectedValue) {
-    console.log("Testing input: " + data);
+    console.log("Testing day 1 puzzle part 2 \nInput: " + data);
 
     let result = getRepeatedFrecuency(data);
     let testPassed = (result === expectedValue);
@@ -53,13 +53,13 @@ data.forEach((element, index) => { if (assert_getFrecuency(element, expectedOutp
 data.forEach((element, index) => { if (assert_getRepeatedFrecuency(element, expectedOutputP2[index])) ++passedTestsP2 });
 
 if (data.length === passedTestsP1) {
-    console.log("All Part 1 tests passed");
+    console.log("All " + passedTestsP1 + " Part 1 tests passed");
 } else {
     console.log(passedTestsP1 + " Part 1 tests passed out of " + data.length);
 }
 
 if (data.length === passedTestsP2) {
-    console.log("All Part 2 tests passed");
+    console.log("All " + passedTestsP2 + " Part 2 tests passed");
 } else {
     console.log(passedTestsP2 + " Part 2 tests passed out of " + data.length);
 }

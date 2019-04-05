@@ -1,11 +1,7 @@
-const { readInputFile, getElementInfo, sortElements, getCommonAsleepMinute, getMaxAsleepTime, processData } = require('./day4');
-
-let test_processData = function (data, expectedValue) {
-    return (day4.processData() === expectedValue);
-}
+const { processData } = require('./day4');
 
 let assert_processData = function (data, expectedValue) {
-    console.log("Testing part 1 and 2 with input: \n\n" + data);
+    console.log("Testing day 4 puzzle parts 1 and 2 with input: \n\n" + data + "\n");
 
     let result = processData(data);
     let testP1passed = (result[0] === expectedValue[0]);

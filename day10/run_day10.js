@@ -1,4 +1,4 @@
-const { readInputFile, processData, processData2 } = require('./day10');
+const { readInputFile, processData } = require('./day10');
 
 if (process.argv.length > 2) { //user added arguments
 
@@ -10,7 +10,7 @@ if (process.argv.length > 2) { //user added arguments
 
     console.log("Processing input..." + "\n");
 
-    let plane = processData2(content);
+    processData(content);
 
 } else {
 
@@ -50,8 +50,6 @@ if (process.argv.length > 2) { //user added arguments
 
     console.log("\nDrawing default points...");
 
-    let plane = processData2(defaultPoints);
-
-    console.log(plane);
+    processData(defaultPoints);
 
 }

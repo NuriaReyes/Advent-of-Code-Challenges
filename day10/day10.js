@@ -148,14 +148,13 @@ let adjustPointsToMin = function (data) {
 
         // Found minimum dimensions and the points are dispersing again
         if (areaDimensions < areaNewDimensions) {
-            console.log("iterations: " + iterations + "\n");
-
             data = returnPoints(data);
             let plane = drawPlane(data, dimensions);
 
             console.log(plane);
+            console.log("\niterations: " + iterations);
             console.log("\nWriting to a file...");
-            
+
             writeOutputFile("output_day10.txt", plane);
 
             return iterations;
@@ -169,7 +168,7 @@ let adjustPointsToMin = function (data) {
     }
 }
 
-let processData2 = function (data) {
+let processData = function (data) {
     data = data.split('\n');
 
     // Converting into array of objects with extracted info
@@ -177,48 +176,10 @@ let processData2 = function (data) {
 
     data = sortElements(data);
 
-    adjustPointsToMin(data);
-
-}
-
-let processData = function (data, seconds, adjustPoints = false, adjustValue = 10140) {
-    data = data.split('\n');
-
-    // Converting into array of objects with extracted info
-    data = data.map(extractPoint);
-
-    data = sortElements(data);
-
-    let dimensions = getPlaneDimentions(data)
-
-    // Adjusting points if plane is too big
-    if (adjustPoints) {
-        for (let j = 0; j < adjustValue; j++) {
-            data = movePoints(data);
-            dimensions = getPlaneDimentions(data)
-        }
-    }
-
-    let plane;
-    let fileContent = '';
-
-    for (let i = 0; i <= seconds; ++i) {
-        let header = '\n\nTime: ' + i + 's...\n\n';
-        plane = drawPlane(data, dimensions);
-        data = movePoints(data);
-
-        fileContent += header;
-        fileContent += plane;
-    }
-
-    console.log("\nWriting to a file...");
-
-    let fileName = writeOutputFile("output_day10.txt", fileContent);
-
-    console.log("File name: " + fileName);
-
-    return fileContent;
+    let iterations = adjustPointsToMin(data);
+ 
+    return iterations;
 }
 
 // Exporting functions 
-module.exports = { readInputFile, writeOutputFile, extractPoint, sortElements, getPlaneDimentions, drawPlane, movePoints, processData2, adjustPointsToMin, returnPoints };
+module.exports = { readInputFile, writeOutputFile, extractPoint, sortElements, getPlaneDimentions, drawPlane, movePoints, processData, adjustPointsToMin, returnPoints };
