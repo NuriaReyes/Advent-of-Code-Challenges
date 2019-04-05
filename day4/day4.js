@@ -5,7 +5,7 @@ let readInputFile = function (fileName) {
 }
 
 // element is an input's raw row
-let getElementInfo = function (element) {
+let getElementInfo = function (element, index, array) {
     let i = element.indexOf('-') + 1; // getting date
     let j = element.indexOf(':') + 1; // getting minute
     let k = element.indexOf('#'); // getting guard ID (if exists)
@@ -23,6 +23,11 @@ let getElementInfo = function (element) {
         }
     }
 
+    elementInfo.dateTimeNum = (elementInfo.date.month * 70000) +
+        (elementInfo.date.day * 2000) +
+        (elementInfo.time.hour * 70) +
+        (elementInfo.time.minute);
+
     if (k === -1) { // sleep/awake guard info
         elementInfo.hasGuardID = false; // No guard ID
         if (asleep !== -1)
@@ -37,55 +42,135 @@ let getElementInfo = function (element) {
         elementInfo.guardID = element.slice(k, k + endID); // guard ID
     }
 
-    // elementInfo = { date: {month, day}, time: {hour, minute}, guard ID?, ID || is guard asleep? } <-- format
+    // elementInfo = { date: {month, day}, time: {hour, minute}, dateTimeNum, guard ID?, ID || is guard asleep? } <-- format
     return elementInfo;
 }
 
-// data is a string with al the raw input
+// data is a string with all the raw input
 let sortElements = function (data) { //sort entries chronologically
     data = data.split('\n');
 
     // Converting into array of objects with extracted info
     data = data.map(getElementInfo);
 
-    let subArray = [];
-    let months = [];
-    let days = [];
-    let hours = [];
-    let minutes = [];
+    data.sort(function (a, b) {
+        return a.dateTimeNum - b.dateTimeNum;
+    });
 
-    for (let i = 1; i <= 12; i++) {
-        months = data.filter(x => (x.date.month === i));
-
-        if (months.length > 0) {
-
-            for (let j = 1; j <= 31; j++) {
-                days = months.filter(x => (x.date.day === j));
-
-                if (days.length > 0) {
-
-                    for (let k = 0; k <= 23; k += 23) {
-                        hours = days.filter(x => (x.time.hour === k));
-
-                        if (hours.length > 0) {
-
-                            for (let m = 0; m <= 59; m++) {
-                                minutes = hours.filter(x => (x.time.minute === m));
-
-                                if (minutes.length > 0) subArray = subArray.concat(minutes);
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-    }
-
-    return subArray;
+    return data;
 }
 
-// data is an array of objects with format: { date: {month, day}, time: {hour, minute}, guard ID?, ID || is guard asleep? }
+// data is an array of objects with format: { date: {month, day}, time: {hour, minute}, dateTimeNum, guard ID?, ID || is guard asleep? }
+let getCommonAsleepMinute = function (data) {
+    let ID = [];
+    let index = -1;
+    let minutes = [];
+
+    for (let i = 0; i < 60; i++) {
+        minutes.push(i);
+    }
+
+    // Adding corresponding ids
+    data.forEach(element => {
+        if (element.hasGuardID) {
+            ID.push(element.guardID);
+            ++index;
+        } else {
+            element.guardID = ID[index];
+        }
+    });
+
+    // Leave only unique values
+    ID = ID.filter(function (value, index, self) {
+        return self.indexOf(value) === index;
+    });
+
+    let totalTimes = [];
+    let sleepIntervals = [];
+    let interval = [];
+
+    // Getting total times for each guard ID
+    ID.forEach(id => {
+        data.forEach(e => {
+            if ((e.guardID === id) && !e.hasGuardID) {
+                //console.log(e);
+
+                if (e.isAsleep) {
+                    interval[0] = e.time.minute;
+                } else {
+                    interval[1] = e.time.minute - 1;
+                    //console.log(interval);
+
+                    let arr = [];
+                    for (let i = interval[0]; i <= interval[1]; i++) {
+                        arr.push(i);
+
+                    }
+
+                    sleepIntervals = sleepIntervals.concat(arr);
+                    //console.log(sleepIntervals);
+
+                }
+
+
+            }
+        });
+        totalTimes.push([...sleepIntervals]);
+        sleepIntervals = [];
+        totalT = 0;
+    });
+
+    console.log("ID length: " + ID.length);
+    console.log(ID);
+
+    console.log("totalTimes length: " + totalTimes.length);
+    console.log(totalTimes);
+
+    //Getting common minutes for each guard
+    let totalMinutes = [];
+    totalTimes.forEach(function (x) {
+        let minuteCounts = {};
+        let max = {};
+        let ref = 0;
+        x.forEach(function (i) {
+            minuteCounts[i] = (minuteCounts[i] || 0) + 1;
+
+            if (minuteCounts[i] > ref) {
+                max.repeated = minuteCounts[i];
+                ref = minuteCounts[i];
+                max.minute = i;
+            }
+        });
+
+        // console.log(max);
+        
+        totalMinutes.push(max);
+    });
+
+    console.log("totalMinutes length: " + totalMinutes.length);
+    console.log(totalMinutes);
+
+    let asleepGuard = {};
+    totalMinutes.map((min, index) => {
+        if (index === 0) {
+            asleepGuard.id = ID[index];
+            asleepGuard.repeated = min.repeated;
+            asleepGuard.minute = min.minute;
+        } else if (min.repeated > asleepGuard.repeated){
+            asleepGuard.id = ID[index];
+            asleepGuard.repeated = min.repeated;
+            asleepGuard.minute = min.minute;
+        }
+    });
+
+    console.log("asleepGuard: ");
+    console.log(asleepGuard);
+    
+    
+    return asleepGuard;
+}
+
+// data is an array of objects with format: { date: {month, day}, time: {hour, minute}, dateTimeNum, guard ID?, ID || is guard asleep? }
 let getMaxAsleepTime = function (data) {
     let ID = [];
     let index = -1;
@@ -172,7 +257,7 @@ let getMaxAsleepTime = function (data) {
         minuteCounts[x] = (minuteCounts[x] || 0) + 1;
     });
 
-    let max = {}; 
+    let max = {};
     let ref = 0;
     for (let x in minuteCounts) {
         if (minuteCounts[x] > ref) {
@@ -191,59 +276,15 @@ let processData = function (data) {
 
     data = sortElements(data);
 
+    getCommonAsleepMinute(data);
+
     let guard = getMaxAsleepTime(data);
 
     console.log("ID: " + guard.id + ", minute: " + guard.maxMin.minute);
-    
+
     let result = Number(guard.id.slice(1)) * Number(guard.maxMin.minute);
 
     return result;
-}
-
-if (process.argv.length > 2) { //user added arguments
-
-    // Getting user's specified arguments
-    let args = process.argv.slice(2); // first 2 elements being node and js file
-    console.log("Reading file " + args[0] + "...\n");
-
-    let content = readInputFile(args[0]);
-
-    console.log("Processing input..." + "\n");
-
-    let result = processData(content);
-
-    console.log("Result: " + result);
-
-} else {
-    let data = '[1518-11-01 00:00] Guard #10 begins shift \
-                \n[1518-11-01 00:05] falls asleep \
-                \n[1518-11-01 00:25] wakes up \
-                \n[1518-11-01 00:30] falls asleep \
-                \n[1518-11-01 00:55] wakes up \
-                \n[1518-11-01 23:58] Guard #99 begins shift \
-                \n[1518-11-02 00:40] falls asleep \
-                \n[1518-11-02 00:50] wakes up \
-                \n[1518-11-03 00:05] Guard #10 begins shift \
-                \n[1518-11-03 00:24] falls asleep \
-                \n[1518-11-03 00:29] wakes up \
-                \n[1518-11-04 00:02] Guard #99 begins shift \
-                \n[1518-11-04 00:36] falls asleep \
-                \n[1518-11-04 00:46] wakes up \
-                \n[1518-11-05 00:03] Guard #99 begins shift \
-                \n[1518-11-05 00:45] falls asleep \
-                \n[1518-11-05 00:55] wakes up';
-
-    console.log("No file entered...");
-    console.log("Default raw data: \n" + data + "\n");
-
-    console.log("Executing default input..." + "\n");
-
-    myData = processData(data);
-    
-    console.log("Result: ");
-
-    console.log(myData);
-
 }
 
 // Exporting functions 
