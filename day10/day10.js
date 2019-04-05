@@ -1,14 +1,12 @@
-let readInputFile = function (fileName) {
-    let fs = require('fs'); // Adding file system module
+const { readFileSync, writeFileSync } = require('fs'); // Adding file system module
 
-    return fs.readFileSync(fileName, 'utf8').trim();
+let readInputFile = function (fileName) {
+    return readFileSync(fileName, 'utf8').trim();
 }
 
 let writeOutputFile = function (fileName, content) {
-    let fs = require('fs'); // Adding file system module
-
     // Writing content to file (string format)
-    fs.writeFileSync(fileName, content, 'utf8');
+    writeFileSync(fileName, content, 'utf8');
 
     return fileName;
 }
@@ -94,6 +92,7 @@ let drawPlane = function (data, dimensions) {
     for (let i = 0; i < h; i++) {
         plane.push(points);
     }
+    
 
     while (pointData.length > 0) {
         yVal = pointData[0].position.y;
@@ -122,6 +121,64 @@ let movePoints = function (data) {
     data = sortElements(data);
 
     return data;
+}
+
+let returnPoints = function (data) {
+    data.forEach(element => {
+        element.position.x -= element.velocity.x;
+        element.position.y -= element.velocity.y;
+    });
+
+    data = sortElements(data);
+
+    return data;
+}
+
+// Input is sorted data
+let adjustPointsToMin = function (data) {
+    let dimensions = getPlaneDimentions(data);
+    data = movePoints(data);
+    let newDimensions = getPlaneDimentions(data);
+    let iterations = 0;
+    let foundMin = false;
+
+    while (!foundMin) {
+        let areaDimensions = (dimensions.maxX - dimensions.minX + 1) * (dimensions.maxY - dimensions.minY + 1);
+        let areaNewDimensions = (newDimensions.maxX - newDimensions.minX + 1) * (newDimensions.maxY - newDimensions.minY + 1);
+
+        // Found minimum dimensions and the points are dispersing again
+        if (areaDimensions < areaNewDimensions) {
+            console.log("iterations: " + iterations + "\n");
+
+            data = returnPoints(data);
+            let plane = drawPlane(data, dimensions);
+
+            console.log(plane);
+            console.log("\nWriting to a file...");
+            
+            writeOutputFile("output_day10.txt", plane);
+
+            return iterations;
+
+        } else {
+            dimensions = newDimensions;
+            data = movePoints(data);
+            ++iterations;
+            newDimensions = getPlaneDimentions(data);
+        }
+    }
+}
+
+let processData2 = function (data) {
+    data = data.split('\n');
+
+    // Converting into array of objects with extracted info
+    data = data.map(extractPoint);
+
+    data = sortElements(data);
+
+    adjustPointsToMin(data);
+
 }
 
 let processData = function (data, seconds, adjustPoints = false, adjustValue = 10140) {
@@ -163,61 +220,5 @@ let processData = function (data, seconds, adjustPoints = false, adjustValue = 1
     return fileContent;
 }
 
-if (process.argv.length > 2) { //user added arguments
-
-    // Getting user's specified arguments
-    let args = process.argv.slice(2); // first 2 elements being node and js file
-    console.log("Reading file " + args[0] + "...\n");
-
-    let content = readInputFile(args[0]);
-
-    console.log("Processing input..." + "\n");
-
-    let plane = processData(content, 5, true);
-
-} else {
-
-    let defaultPoints = 'position=< 9,  1> velocity=< 0,  2> \
-                        \nposition=< 7,  0> velocity=<-1,  0> \
-                        \nposition=< 3, -2> velocity=<-1,  1> \
-                        \nposition=< 6, 10> velocity=<-2, -1> \
-                        \nposition=< 2, -4> velocity=< 2,  2> \
-                        \nposition=<-6, 10> velocity=< 2, -2> \
-                        \nposition=< 1,  8> velocity=< 1, -1> \
-                        \nposition=< 1,  7> velocity=< 1,  0> \
-                        \nposition=<-3, 11> velocity=< 1, -2> \
-                        \nposition=< 7,  6> velocity=<-1, -1> \
-                        \nposition=<-2,  3> velocity=< 1,  0> \
-                        \nposition=<-4,  3> velocity=< 2,  0> \
-                        \nposition=<10, -3> velocity=<-1,  1> \
-                        \nposition=< 5, 11> velocity=< 1, -2> \
-                        \nposition=< 4,  7> velocity=< 0, -1> \
-                        \nposition=< 8, -2> velocity=< 0,  1> \
-                        \nposition=<15,  0> velocity=<-2,  0> \
-                        \nposition=< 1,  6> velocity=< 1,  0> \
-                        \nposition=< 8,  9> velocity=< 0, -1> \
-                        \nposition=< 3,  3> velocity=<-1,  1> \
-                        \nposition=< 0,  5> velocity=< 0, -1> \
-                        \nposition=<-2,  2> velocity=< 2,  0> \
-                        \nposition=< 5, -2> velocity=< 1,  2> \
-                        \nposition=< 1,  4> velocity=< 2,  1> \
-                        \nposition=<-2,  7> velocity=< 2, -2> \
-                        \nposition=< 3,  6> velocity=<-1, -1> \
-                        \nposition=< 5,  0> velocity=< 1,  0> \
-                        \nposition=<-6,  0> velocity=< 2,  0> \
-                        \nposition=< 5,  9> velocity=< 1, -2> \
-                        \nposition=<14,  7> velocity=<-2,  0> \
-                        \nposition=<-3,  6> velocity=< 2, -1>' ;
-
-    console.log("No file entered...");
-
-    console.log("\nDrawing default points...");
-
-    let plane = processData(defaultPoints, 3);
-
-    console.log(plane);
-
-}
-
 // Exporting functions 
-module.exports = { readInputFile, writeOutputFile, extractPoint, sortElements, getPlaneDimentions, drawPlane, movePoints, processData };
+module.exports = { readInputFile, writeOutputFile, extractPoint, sortElements, getPlaneDimentions, drawPlane, movePoints, processData2, adjustPointsToMin, returnPoints };
