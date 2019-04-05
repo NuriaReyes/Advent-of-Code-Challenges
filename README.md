@@ -17,7 +17,11 @@ This repo is to document the code used to solve challenges from https://adventof
 
 ### To run/test files:
 * Open command line, and go inside the day's folder you want to run
-  * (In Unix/Linux) `cd ./dayX`
+
+  ```console
+  cd ./dayX
+  ```
+  
 * To get the answer to the puzzle with the input provided by AoC:
   * run the file `run_dayX.js` file and as a second parameter the `input_dayX.txt` with node:
   
