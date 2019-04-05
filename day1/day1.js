@@ -1,7 +1,7 @@
 let readInputFile = function (fileName) {
-    let fs = require('fs'); // Adding file system module
+    const { readFileSync  } = require('fs'); // Adding file system module
     
-    return fs.readFileSync(fileName, 'utf8').trim().split('\n').map(x => Number(x));
+    return readFileSync(fileName, 'utf8').trim().split('\n').map(x => Number(x));
 }
 
 let getFrecuency = function (array) {
