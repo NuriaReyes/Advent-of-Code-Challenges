@@ -1,37 +1,37 @@
 const { readInputFile, processData } = require('./day10');
 
-let assert_processData = function (data, expectedValueP1, expectedValueP2) {
-    console.log("Testing day 10 puzzle parts 1 and 2");
+const assert_processData = function (data, expectedValueP1, expectedValueP2) {
+  console.log('Testing day 10 puzzle parts 1 and 2');
 
-    console.log("\nOutput:\n");
-    let result2 = processData(data);
+  console.log('\nOutput:\n');
+  const result2 = processData(data);
 
-    let result = readInputFile("output_day10.txt");
+  const result = readInputFile('output_day10.txt');
 
-    let testP1passed = (result === expectedValueP1);
-    let testP2passed = (result2 === expectedValueP2);
+  const testP1passed = (result === expectedValueP1);
+  const testP2passed = (result2 === expectedValueP2);
 
-    if (testP1passed) {
-        console.log("\nPart 1 test passed\n");
-    } else {
-        console.log("\nExpected: ");
-        console.log(expectedValueP1);
-        console.log("Part 1 test failed\n");
-    }
+  if (testP1passed) {
+    console.log('\nPart 1 test passed\n');
+  } else {
+    console.log('\nExpected: ');
+    console.log(expectedValueP1);
+    console.log('Part 1 test failed\n');
+  }
 
-    if (testP2passed) {
-        console.log("Part 2 test passed\n");
-    } else {
-        console.log("Expected: " + expectedValueP2);
-        console.log("Part 2 test failed\n");
-    }
+  if (testP2passed) {
+    console.log('Part 2 test passed\n');
+  } else {
+    console.log('Expected: ' + expectedValueP2);
+    console.log('Part 2 test failed\n');
+  }
 
-    let testsPassed = [testP1passed, testP2passed]
+  const testsPassed = [testP1passed, testP2passed];
 
-    return testsPassed;
-}
+  return testsPassed;
+};
 
-let data = 'position=< 9,  1> velocity=< 0,  2> \
+const data = 'position=< 9,  1> velocity=< 0,  2> \
             \nposition=< 7,  0> velocity=<-1,  0> \
             \nposition=< 3, -2> velocity=<-1,  1> \
             \nposition=< 6, 10> velocity=<-2, -1> \
@@ -63,17 +63,17 @@ let data = 'position=< 9,  1> velocity=< 0,  2> \
             \nposition=<14,  7> velocity=<-2,  0> \
             \nposition=<-3,  6> velocity=< 2, -1>';
 
-let expValP1 =
-"#...#..###\
+const expValP1 =
+'#...#..###\
 \n#...#...#.\
 \n#...#...#.\
 \n#####...#.\
 \n#...#...#.\
 \n#...#...#.\
 \n#...#...#.\
-\n#...#..###";
+\n#...#..###';
 
-let expValP2 = 3;
+const expValP2 = 3;
 
 // Running test
 assert_processData(data, expValP1, expValP2);

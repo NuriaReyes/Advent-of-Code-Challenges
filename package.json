@@ -1,0 +1,24 @@
+{
+  "name": "adventofcode_challenge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NuriaReyes/Advent-of-Code-Challenges.git"
+  },
+  "author": "Nuria Reyes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NuriaReyes/Advent-of-Code-Challenges/issues"
+  },
+  "homepage": "https://github.com/NuriaReyes/Advent-of-Code-Challenges#readme",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0"
+  }
+}

@@ -2,21 +2,21 @@ const { readInputFile, processData } = require('./day4');
 
 if (process.argv.length > 2) { //user added arguments
 
-    // Getting user's specified arguments
-    let args = process.argv.slice(2); // first 2 elements being node and js file
-    console.log("Reading file " + args[0] + "...\n");
+  // Getting user's specified arguments
+  const args = process.argv.slice(2); // first 2 elements being node and js file
+  console.log('Reading file ' + args[0] + '...\n');
 
-    let content = readInputFile(args[0]);
+  const content = readInputFile(args[0]);
 
-    console.log("Processing input..." + "\n");
+  console.log('Processing input...' + '\n');
 
-    let result = processData(content);
+  const result = processData(content);
 
-    console.log("Strategy 1 result: " + result[0]);
-    console.log("Strategy 2 result: " + result[1]);
+  console.log('Strategy 1 result: ' + result[0]);
+  console.log('Strategy 2 result: ' + result[1]);
 
 } else {
-    let data = '[1518-11-01 00:00] Guard #10 begins shift \
+  const data = '[1518-11-01 00:00] Guard #10 begins shift \
                 \n[1518-11-01 00:05] falls asleep \
                 \n[1518-11-01 00:25] wakes up \
                 \n[1518-11-01 00:30] falls asleep \
@@ -34,13 +34,13 @@ if (process.argv.length > 2) { //user added arguments
                 \n[1518-11-05 00:45] falls asleep \
                 \n[1518-11-05 00:55] wakes up';
 
-    console.log("No file entered...");
-    console.log("Default raw data: \n" + data + "\n");
+  console.log('No file entered...');
+  console.log('Default raw data: \n' + data + '\n');
 
-    console.log("Executing default input..." + "\n");
+  console.log('Executing default input...' + '\n');
 
-    result = processData(data);
+  const result = processData(data);
 
-    console.log("Strategy 1 result: " + result[0]);
-    console.log("Strategy 2 result: " + result[1]);
+  console.log('Strategy 1 result: ' + result[0]);
+  console.log('Strategy 2 result: ' + result[1]);
 }

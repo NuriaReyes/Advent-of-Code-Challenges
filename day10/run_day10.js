@@ -2,19 +2,19 @@ const { readInputFile, processData } = require('./day10');
 
 if (process.argv.length > 2) { //user added arguments
 
-    // Getting user's specified arguments
-    let args = process.argv.slice(2); // first 2 elements being node and js file
-    console.log("Reading file " + args[0] + "...\n");
+  // Getting user's specified arguments
+  const args = process.argv.slice(2); // first 2 elements being node and js file
+  console.log('Reading file ' + args[0] + '...\n');
 
-    let content = readInputFile(args[0]);
+  const content = readInputFile(args[0]);
 
-    console.log("Processing input..." + "\n");
+  console.log('Processing input...' + '\n');
 
-    processData(content);
+  processData(content);
 
 } else {
 
-    let defaultPoints = 'position=< 9,  1> velocity=< 0,  2> \
+  const defaultPoints = 'position=< 9,  1> velocity=< 0,  2> \
                         \nposition=< 7,  0> velocity=<-1,  0> \
                         \nposition=< 3, -2> velocity=<-1,  1> \
                         \nposition=< 6, 10> velocity=<-2, -1> \
@@ -46,10 +46,10 @@ if (process.argv.length > 2) { //user added arguments
                         \nposition=<14,  7> velocity=<-2,  0> \
                         \nposition=<-3,  6> velocity=< 2, -1>' ;
 
-    console.log("No file entered...");
+  console.log('No file entered...');
 
-    console.log("\nDrawing default points...");
+  console.log('\nDrawing default points...');
 
-    processData(defaultPoints);
+  processData(defaultPoints);
 
 }
